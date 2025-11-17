@@ -17,18 +17,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Set initial text from ViewModel's total
-        updateText(viewModel.total)
-
-        // Set click listener to increment total in ViewModel
-        findViewById<Button>(R.id.button_increment).setOnClickListener {
-            viewModel.incrementTotal()
-            updateText(viewModel.total)
-        }
+        prepareViewModel()
     }
 
     private fun updateText(total: Int) {
         findViewById<TextView>(R.id.text_total).text =
             getString(R.string.text_total, total)
+    }
+
+    private fun prepareViewModel(){
+        // Observe the LiveData object
+        viewModel.total.observe(this) {
+            // Whenever the value of the LiveData object changes
+            // the updateText() is called, with the new value as the
+            // parameter
+            updateText(it)
+        }
+
+        findViewById<Button>(R.id.button_increment).setOnClickListener {
+            viewModel.incrementTotal()
+        }
     }
 }
